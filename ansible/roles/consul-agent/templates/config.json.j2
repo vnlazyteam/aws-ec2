@@ -1,0 +1,20 @@
+{
+    "client_addr": "0.0.0.0",
+    "bind_addr": "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}",
+    "datacenter": "Consul-Production-Aws",
+    "data_dir": "{{ consul.data_dir }}",
+    "domain": "consul",
+    "enable_script_checks": true,
+    "dns_config": {
+        "enable_truncate": true,
+        "only_passing": true
+    },
+    "enable_syslog": true,
+    "encrypt": "g1v7BCf9xa025TvtYj8DD6GaiX5s4PCdv4n8aBdRYBs=",
+    "leave_on_terminate": true,
+    "log_level": "INFO",
+    "rejoin_after_leave": true,
+    "server": false,
+    "start_join": [{% for host in consul_master_hosts %}"{{ host }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+    "ui": true
+}

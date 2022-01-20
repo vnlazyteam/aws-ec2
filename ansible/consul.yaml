@@ -1,0 +1,7 @@
+---
+- name: install Consul Master
+  hosts: consul-master
+  remote_user: root
+
+  roles:
+    - consul-agent

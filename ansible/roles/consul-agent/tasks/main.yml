@@ -1,0 +1,37 @@
+- name: Ensure download consul binary
+  get_url:
+    url: "{{ consul.url_download }}/{{ consul.version }}/consul_{{ consul.version }}_linux_amd64.zip"
+    dest: "{{ consul.download_tmp_dir }}/consul_{{ consul.version }}.zip"
+
+- name: Ensure consul config dir
+  file:
+    path: "{{ consul.config_dir }}"
+    state: directory
+
+- name: Ensure unzip command ready
+  command: yum install unzip -y
+
+- name: Ensure unzip file consul.zip
+  command: unzip -o {{ consul.download_tmp_dir }}/consul_{{ consul.version }}.zip -d {{ consul.binary_path }}
+
+- name: Ensure systemd consul.service
+  template:
+    src: consul.service.j2
+    dest: /etc/systemd/system/consul.service
+    owner: root
+    group: root
+    mode: 644
+
+- name: ensure consul config.json
+  template:
+    src: config.json.j2
+    dest: "{{ consul.config_dir }}/config.json"
+    owner: root
+    group: root
+    mode: 644
+
+- name: Ensure validate consul config.json
+  command: "{{ consul.binary_path }}/consul validate {{ consul.config_dir }}/config.json"
+
+- name: Start service consul
+  service: name=consul state=started enabled=yes daemon_reload=yes
